@@ -1,0 +1,40 @@
+resources:
+  jobs:
+    Student_attendance_job:
+      name: Student_attendance_job
+      tasks:
+        - task_key: 00_setup_infrastructure
+          notebook_task:
+            notebook_path: /Workspace/Users/david.ramirez@est.iudigital.edu.co/Student track
+              system/00_setup_infrastructure
+            source: WORKSPACE
+        - task_key: 01_ingest_attendance
+          depends_on:
+            - task_key: 00_setup_infrastructure
+          notebook_task:
+            notebook_path: /Workspace/Users/david.ramirez@est.iudigital.edu.co/Student track
+              system/01_ingest_attandance_bronze
+            source: WORKSPACE
+        - task_key: 02_clean_attendance
+          depends_on:
+            - task_key: 01_ingest_attendance
+          notebook_task:
+            notebook_path: /Workspace/Users/david.ramirez@est.iudigital.edu.co/Student track
+              system/02_clean_attendance_silver
+            source: WORKSPACE
+        - task_key: 03_keymetrics
+          depends_on:
+            - task_key: 02_clean_attendance
+          notebook_task:
+            notebook_path: /Workspace/Users/david.ramirez@est.iudigital.edu.co/Student track
+              system/03_keymetrics_gold
+            source: WORKSPACE
+        - task_key: vizualize_attendance_dashboard
+          depends_on:
+            - task_key: 03_keymetrics
+          dashboard_task:
+            subscription: {}
+            dashboard_id: 01f0d37bfd861a94b6b409d389a888f6
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
